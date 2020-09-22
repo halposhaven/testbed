@@ -4,7 +4,7 @@ metadata:
   name: api-debug
 spec:
   tls:
-    - secretName: starchup-ssl-2020
+    - secretName: starchup-ssl-2021
   backend:
     serviceName: api-debug
     servicePort: 80

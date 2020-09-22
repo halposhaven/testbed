@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: api-debug
-          image: gcr.io/starchup-147119/central:e2b5ea3ec9eeb55fb1b53d694438e7a47f344315
+          image: gcr.io/starchup-147119/central:e2b5ea3ec9eeb55fb1b53d694438e7a47f344323
           resources:
             limits:
               cpu: 300m
