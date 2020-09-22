@@ -1,0 +1,144 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: api-debug
+spec:
+  selector:
+    matchLabels:
+      run: api-debug
+  template:
+    metadata:
+      labels:
+        run: api-debug
+    spec:
+      containers:
+        - name: api-debug
+          image: gcr.io/starchup-147119/central:e2b5ea3ec9eeb55fb1b53d694438e7a47f344315
+          resources:
+            limits:
+              cpu: 300m
+              memory: 600Mi
+            requests:
+              cpu: 100m
+              memory: 200Mi
+          env:
+            - name: REDIS_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: redis.host
+            - name: REDIS_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: redis
+                  key: redis.port
+            - name: NODE_ENV
+              value: production
+            - name: DB_CONNECTOR
+              value: mysql
+            - name: DB_HOST
+              value: cloudsql-proxy
+            - name: DB_DATABASE
+              value: starchup
+            - name: DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: cloudsql
+            - name: DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cloudsql
+            - name: TRACKER_DB_CONNECTOR
+              value: mysql
+            - name: TRACKER_DB_HOST
+              value: cloudsql-proxy
+            - name: TRACKER_DB_DATABASE
+              value: tracker
+            - name: TRACKER_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: cloudsql
+            - name: TRACKER_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cloudsql
+            - name: INTEGRATOR_DB_HOST
+              value: cloudsql-proxy
+            - name: INTEGRATOR_DB_CONNECTOR
+              value: mysql
+            - name: INTEGRATOR_DB_DATABASE
+              value: integrator
+            - name: INTEGRATOR_DB_USER
+              valueFrom:
+                secretKeyRef:
+                  key: username
+                  name: cloudsql
+            - name: INTEGRATOR_DB_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: password
+                  name: cloudsql
+            - name: PREFERENCE_SERVICE_URL
+              value: http://pref-service/api
+            - name: PAYMENT_PROCESSING_SERVICE_URL
+              value: http://pay-service/api
+            - name: AUTH
+              value: https://auth.starchup.com:5002
+            - name: DASHBOARD
+              value: https://dash.starchup.com
+            - name: EMAIL_SERVICE_URL
+              value: http://email-service/api
+            - name: GEO_SERVICE_URL
+              value: http://geo-service
+            - name: PRINT_SERVICE_URL
+              value: http://print-service/api
+            - name: ADWORDS_SERVICE_URL
+              value: http://master-tracker/api
+            - name: LOCATION_SERVICE_URL
+              value: "http://location-serv/api"
+            - name: GOOGLE_API_KEY
+              value: AIzaSyBX1ButOnXdLy0UhCXUiATffT8EH9Pf2Rk
+            - name: BRANCH_UID
+              value: "162922990915310067"
+            - name: STARCHUP_USER
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: starchup-credentials
+            - name: STARCHUP_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: pass
+                  name: starchup-credentials
+            - name: GCLOUD_PROJECT
+              value: starchup-147119
+            - name: API_EMAIL
+              valueFrom:
+                secretKeyRef:
+                  key: user
+                  name: starchup-credentials
+            - name: API_PASS
+              valueFrom:
+                secretKeyRef:
+                  key: pass
+                  name: starchup-credentials
+          ports:
+            - containerPort: 80
+              name: api-debug
+          readinessProbe:
+            httpGet:
+              path: /
+              port: api-debug
+            initialDelaySeconds: 10
+            periodSeconds: 15
+            timeoutSeconds: 15
+          livenessProbe:
+            httpGet:
+              path: /
+              port: api-debug
+            periodSeconds: 60
+            timeoutSeconds: 10
